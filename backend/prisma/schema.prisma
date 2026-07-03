@@ -1,0 +1,102 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String   @id @default(cuid())
+  name              String
+  email             String   @unique
+  passwordHash      String
+  timezone          String   @default("UTC")
+  latitude          Float?
+  longitude         Float?
+  calculationMethod String   @default("MWL")
+  madhab            String   @default("Hanafi")
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  prayerLogs            PrayerLog[]
+  prayerTimes           PrayerTime[]
+  streak                Streak?
+  achievements          Achievement[]
+  pushSubscriptions     PushSubscription[]
+  notificationPrefs     NotificationPreference[]
+}
+
+model PrayerTime {
+  id      String @id @default(cuid())
+  userId  String
+  date    String // "YYYY-MM-DD"
+  fajr    String
+  sunrise String
+  dhuhr   String
+  asr     String
+  maghrib String
+  isha    String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date])
+}
+
+model PrayerLog {
+  id           String    @id @default(cuid())
+  userId       String
+  date         String    // "YYYY-MM-DD"
+  prayerName   String    // fajr | dhuhr | asr | maghrib | isha
+  status       String    // on_time | late | qadha | missed
+  completedAt  DateTime?
+  notes        String?
+  khushuRating Int?      // 1-5
+  createdAt    DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date, prayerName])
+}
+
+model Streak {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  longestStreak Int      @default(0)
+  updatedAt     DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Achievement {
+  id          String   @id @default(cuid())
+  userId      String
+  achievement String
+  earnedAt    DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model PushSubscription {
+  id        String   @id @default(cuid())
+  userId    String
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model NotificationPreference {
+  id            String  @id @default(cuid())
+  userId        String
+  prayerName    String
+  enabled       Boolean @default(false)
+  offsetMinutes Int     @default(0) // negative = before, 0 = at time, positive = after
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, prayerName])
+}
