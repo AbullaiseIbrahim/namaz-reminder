@@ -88,7 +88,7 @@ export default function MainLayout() {
         </Toolbar>
       </AppBar>
 
-      <Box component="main" sx={{ flex: 1, pb: 10 }}>
+      <Box component="main" sx={{ flex: 1, pb: `calc(56px + env(safe-area-inset-bottom) + 24px)` }}>
         <Outlet />
       </Box>
 
