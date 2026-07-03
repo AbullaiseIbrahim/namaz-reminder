@@ -14,7 +14,7 @@ export const prayerController = {
 
   getMonth: async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     try {
-      const { yearMonth } = req.params; // e.g. "2026-06"
+      const yearMonth = req.params.yearMonth as string; // e.g. "2026-06"
       const times = await prayerService.getMonthTimes(req.user!.id, yearMonth);
       res.json(times);
     } catch (err) {
