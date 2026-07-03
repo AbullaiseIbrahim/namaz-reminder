@@ -37,8 +37,12 @@ export default function MainLayout() {
   const currentTab = NAV_ITEMS.findIndex(i => i.path === pathname);
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', bgcolor: 'background.default' }}>
-      <AppBar position="sticky" elevation={0} sx={{ position: 'relative', overflow: 'hidden' }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100dvh', bgcolor: 'background.default' }}>
+      {/* AppBar extends into status bar area on iOS PWA */}
+      <AppBar position="sticky" elevation={0} sx={{
+        overflow: 'hidden',
+        paddingTop: 'env(safe-area-inset-top)',
+      }}>
         <GeometricPattern />
         <Toolbar sx={{ position: 'relative', zIndex: 1 }}>
           <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', gap: 1.25 }}>
@@ -95,6 +99,7 @@ export default function MainLayout() {
           position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 1200,
           borderTop: '1px solid rgba(26,82,118,0.1)',
           boxShadow: '0 -4px 20px rgba(26,82,118,0.08)',
+          paddingBottom: 'env(safe-area-inset-bottom)',
         }}
       >
         <BottomNavigation value={currentTab} onChange={(_, v) => navigate(NAV_ITEMS[v].path)} showLabels>

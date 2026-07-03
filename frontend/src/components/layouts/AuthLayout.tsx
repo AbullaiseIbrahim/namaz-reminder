@@ -5,11 +5,14 @@ import { alpha } from '@mui/material/styles';
 export default function AuthLayout() {
   return (
     <Box sx={{
-      minHeight: '100vh',
+      minHeight: '100dvh',
       background: 'linear-gradient(160deg, #0f1b24 0%, #154360 40%, #1a5276 100%)',
       display: 'flex', flexDirection: 'column',
       alignItems: 'center', justifyContent: 'center',
-      p: 2, position: 'relative', overflow: 'hidden',
+      p: 2,
+      paddingTop: 'max(16px, env(safe-area-inset-top))',
+      paddingBottom: 'max(16px, env(safe-area-inset-bottom))',
+      position: 'relative', overflow: 'hidden',
     }}>
       {/* Geometric background pattern */}
       <Box sx={{

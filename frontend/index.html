@@ -5,8 +5,8 @@
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#1a5276" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#154360" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="Salah" />
@@ -17,7 +17,13 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&family=Noto+Naskh+Arabic:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
       * { margin: 0; padding: 0; box-sizing: border-box; }
+      /* Navy fills the status bar area on iOS PWA */
+      html { background: #154360; }
       body { font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif; }
+      /* Prevent iOS auto-zoom on input focus (requires font-size >= 16px) */
+      input, textarea, select { font-size: 16px !important; }
+      /* Smooth scrolling, no rubber-band bleed */
+      body { overscroll-behavior: none; }
     </style>
   </head>
   <body>
