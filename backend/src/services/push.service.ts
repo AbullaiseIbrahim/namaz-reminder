@@ -50,10 +50,27 @@ async function sendPush(
   }
 }
 
+/** Get current HH:MM minutes in a given timezone (avoids UTC vs local mismatch) */
+function getNowMinutesInTz(now: Date, timezone: string): number {
+  try {
+    const parts = new Intl.DateTimeFormat('en-US', {
+      timeZone: timezone,
+      hour: 'numeric',
+      minute: 'numeric',
+      hour12: false,
+    }).formatToParts(now);
+    const h = parseInt(parts.find(p => p.type === 'hour')?.value   ?? '0', 10) % 24;
+    const m = parseInt(parts.find(p => p.type === 'minute')?.value ?? '0', 10);
+    return h * 60 + m;
+  } catch {
+    // Fallback to UTC if timezone is invalid
+    return now.getUTCHours() * 60 + now.getUTCMinutes();
+  }
+}
+
 /** Main function — called every minute by the cron job */
 async function checkAndSendPrayerAlarms(): Promise<void> {
   const now = new Date();
-  const nowMinutes = now.getHours() * 60 + now.getMinutes();
 
   let users: Awaited<ReturnType<typeof pushRepository.getAllUsersWithSubs>>;
   try {
@@ -65,6 +82,9 @@ async function checkAndSendPrayerAlarms(): Promise<void> {
 
   for (const user of users) {
     if (!user.latitude || !user.longitude) continue;
+
+    // nowMinutes in the USER's local timezone (not UTC)
+    const nowMinutes = getNowMinutesInTz(now, user.timezone);
 
     // Calculate today's prayer times in the user's timezone
     let times: Record<string, string>;
@@ -86,7 +106,7 @@ async function checkAndSendPrayerAlarms(): Promise<void> {
     }
 
     for (const pref of user.notificationPrefs) {
-      const rawTime = times[pref.prayerName]; // "HH:MM"
+      const rawTime = times[pref.prayerName]; // "HH:MM" in user's local timezone
       if (!rawTime) continue;
 
       const [h, m] = rawTime.split(':').map(Number);
